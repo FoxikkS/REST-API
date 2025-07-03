@@ -1,0 +1,10 @@
+DEFAULT :
+    Env: "local"
+    StoragePath: "./storage"
+    DebugMod: true
+
+SERVER:
+    Address: "localhost"
+    Port: 8080
+    Timeout: 4s
+    IdleTimeout: 60s
