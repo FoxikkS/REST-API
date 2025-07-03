@@ -2,10 +2,7 @@ package main
 
 import (
 	"REST-API-pet-proj/internal"
-	"fmt"
-	"log"
 	"log/slog"
-	"net/http"
 	"os"
 )
 
@@ -17,21 +14,35 @@ const (
 
 func main() {
 	cfg := internal.InitConfigParser()
+	log := SetupLogger(cfg.Default.Env)
+
+	log.Info("Starting server",
+		slog.String("Environment", cfg.Default.Env),
+		slog.String("Storage Path", cfg.Default.StoragePath),
+		slog.Bool("Debug mod", cfg.Default.DebugMod),
+		slog.String("status", "initializing"),
+	)
 }
 
-func LoggerHandler(env string) *slog.Logger {
-	var logger *slog.Logger
+func SetupLogger(env string) *slog.Logger {
+	var log *slog.Logger
 	switch env {
 	case envLocal:
-		slog.New(
+		log = slog.New(
 			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envDev:
-		slog.New(
+		log = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envProd:
-		slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})
+		log = slog.New(
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		)
+	default:
+		log = slog.New(
+			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		)
 	}
-	return logger
+	return log
 }

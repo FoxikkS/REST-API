@@ -4,15 +4,15 @@ import "time"
 
 type Config struct {
 	Default struct {
-		Env         string `yaml:"Env"`
-		StoragePath string `yaml:"StoragePath"`
-		DebugMod    bool   `yaml:"DebugMod"`
-	} `yaml:"DEFAULT"`
+		Env         string `env:"ENV"`
+		StoragePath string `env:"STORAGE_PATH"`
+		DebugMod    bool   `env:"DEBUG_MOD"`
+	}
 
 	Server struct {
-		Address     string        `yaml:"Address"`
-		Port        int           `yaml:"Port"`
-		Timeout     time.Duration `yaml:"Timeout"`
-		IdleTimeout time.Duration `yaml:"IdleTimeout"`
-	} `yaml:"SERVER"`
+		Address     string        `env:"SERVER_ADDRESS"`
+		Port        int           `env:"SERVER_PORT"`
+		Timeout     time.Duration `env:"SERVER_TIMEOUT"`
+		IdleTimeout time.Duration `env:"SERVER_IDLE_TIMEOUT"`
+	}
 }

@@ -7,7 +7,6 @@ import (
 	"os"
 )
 
-var Cfg structure.Config
 var ConfigPath = os.Getenv("CONFIG_PATH")
 
 func checkConfig() bool {
@@ -25,6 +24,7 @@ func checkConfig() bool {
 }
 
 func InitConfigParser() structure.Config {
+	var Cfg structure.Config
 	if checkConfig() == true {
 		slog.Info("Reading config")
 		err := cleanenv.ReadConfig(ConfigPath, &Cfg)
