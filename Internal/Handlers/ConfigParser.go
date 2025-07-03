@@ -1,7 +1,7 @@
-package internal
+package Handlers
 
 import (
-	"REST-API-pet-proj/structure"
+	"REST-API-pet-proj/Structure"
 	"github.com/ilyakaznacheev/cleanenv"
 	"log/slog"
 	"os"
@@ -23,8 +23,8 @@ func checkConfig() bool {
 	return true
 }
 
-func InitConfigParser() structure.Config {
-	var Cfg structure.Config
+func InitConfigParser() Structure.Config {
+	var Cfg Structure.Config
 	if checkConfig() == true {
 		slog.Info("Reading config")
 		err := cleanenv.ReadConfig(ConfigPath, &Cfg)

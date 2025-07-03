@@ -1,7 +1,6 @@
-package main
+package Handlers
 
 import (
-	"REST-API-pet-proj/internal"
 	"log/slog"
 	"os"
 )
@@ -11,18 +10,6 @@ const (
 	envDev   = "dev"
 	envProd  = "prod"
 )
-
-func main() {
-	cfg := internal.InitConfigParser()
-	log := SetupLogger(cfg.Default.Env)
-
-	log.Info("Starting server",
-		slog.String("Environment", cfg.Default.Env),
-		slog.String("Storage Path", cfg.Default.StoragePath),
-		slog.Bool("Debug mod", cfg.Default.DebugMod),
-		slog.String("status", "initializing"),
-	)
-}
 
 func SetupLogger(env string) *slog.Logger {
 	var log *slog.Logger
