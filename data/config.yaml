@@ -1,5 +1,5 @@
 DEFAULT :
-    Env: "local"
+    Env: "local" #dev, prod
     StoragePath: "./storage"
     DebugMod: true
 
