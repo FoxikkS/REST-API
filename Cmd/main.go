@@ -33,8 +33,8 @@ func main() {
 
 	router.Route("/api", func(r chi.Router) {
 		r.Post("/register", UserApi.UserRegistrationHandler(storage))
-		//r.Post("/login", UserApi.UserLoginHandler(storage))
-		//r.Get("/user/{id}", UserApi.GetUserHandler(storage))
+		r.Post("/login", UserApi.UserLoginHandler(storage))
+		r.Get("/{username}", UserApi.GetUserData(storage))
 	})
 
 	Log.Info("Starting server",

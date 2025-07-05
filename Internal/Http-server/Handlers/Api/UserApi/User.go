@@ -3,66 +3,106 @@ package UserApi
 import (
 	"REST-API-pet-proj/Internal/Storage"
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
+	"REST-API-pet-proj/Structure"
 	"encoding/json"
-	"github.com/go-playground/validator/v10"
+	"github.com/go-chi/chi/v5"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
-type registration struct {
-	Username string `json:"username" validate:"required,min=3,max=32"`
-	Password string `json:"password" validate:"required,min=4,max=31"`
-	Email    string `json:"email" validate:"required,email"`
-}
-
 func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var validate = validator.New()
-		var req registration
+		var req Structure.UserRegistration
 
-		r.Body = http.MaxBytesReader(w, r.Body, 1048576)
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+		if !ParseAndValidateJSON(w, r, &req) {
 			return
 		}
 
-		err = validate.Struct(req)
+		var hash string
+		hash, err := PasswordHash(req.Password)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_, err = w.Write([]byte(err.Error()))
 			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			return
 		}
 
-		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		err = Storage.SaveUser(
+			req.Username,
+			req.Email,
+			hash)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+
+			_, err = w.Write([]byte(err.Error()))
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 
-		err = Storage.SaveUser(req.Username, req.Email, string(hash))
+		w.WriteHeader(http.StatusCreated)
+
+		_, err = w.Write([]byte("User Registration Successful"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
 			return
 		}
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte("User Registration Successful"))
 	}
 }
 
 func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req Structure.UserRegistration
 
+		if !ParseAndValidateJSON(w, r, &req) {
+			return
+		}
+
+		passwordHash, err := Storage.GetUserPassword(req.Username, req.Email)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			_, err = w.Write([]byte("Invalid username or email"))
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.Password))
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		_, err = w.Write([]byte("User Login Successful"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
-func GetUserHandler(storage Sqlite.Storage) http.HandlerFunc {
+func GetUserData(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var username = chi.URLParam(r, "username")
 
+		userData, _ := Storage.GetUserData(username)
+		if userData == nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		err := json.NewEncoder(w).Encode(userData)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 }
