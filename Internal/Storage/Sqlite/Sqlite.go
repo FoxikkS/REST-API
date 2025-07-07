@@ -10,6 +10,7 @@ type Storage struct {
 }
 
 func InitStorage(storagePath string) (*Storage, error) {
+	//пока заюзаю склайт, потом мигрирую на постгрес
 	db, err := sql.Open("sqlite", storagePath)
 	if err != nil {
 		return nil, err

@@ -2,7 +2,7 @@ package Storage
 
 import (
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
-	"REST-API-pet-proj/Structure"
+	"REST-API-pet-proj/Models"
 )
 
 var Storage Sqlite.Storage
@@ -21,15 +21,15 @@ func GetUserPassword(username, email string) (string, error) {
 	FROM users 
 	WHERE email = ? AND username = ?`,
 		email, username).Scan(&passwordHash)
-	
+
 	if err != nil {
 		return "", err
 	}
 	return passwordHash, nil
 }
 
-func GetUserData(username string) (*Structure.UserData, error) {
-	var userData Structure.UserData
+func GetUserData(username string) (*Models.UserData, error) {
+	var userData Models.UserData
 	err := Storage.DB.QueryRow(`
 	SELECT id, username, email, avatar_url, created_at 
 	FROM users 

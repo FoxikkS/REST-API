@@ -1,10 +1,10 @@
-package UserApi
+package User
 
 import (
-	"REST-API-pet-proj/Internal/Http-server/Handlers/Api/UserApi/Handlers"
+	"REST-API-pet-proj/Internal/HttpServer/Api/User/Handlers"
 	"REST-API-pet-proj/Internal/Storage"
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
-	"REST-API-pet-proj/Structure"
+	"REST-API-pet-proj/Models"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -13,7 +13,7 @@ import (
 
 func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req Structure.UserRegistration
+		var req Models.UserRegistration
 
 		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
@@ -56,7 +56,7 @@ func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 
 func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req Structure.UserRegistration
+		var req Models.UserRegistration
 
 		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
