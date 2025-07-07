@@ -34,6 +34,8 @@ func main() {
 	router.Route("/api", func(r chi.Router) {
 		r.Post("/register", UserApi.UserRegistrationHandler(storage))
 		r.Post("/login", UserApi.UserLoginHandler(storage))
+		r.Post("/like", uSER)
+
 		r.Get("/{username}", UserApi.GetUserData(storage))
 	})
 

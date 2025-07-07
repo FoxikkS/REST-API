@@ -1,6 +1,7 @@
 package UserApi
 
 import (
+	"REST-API-pet-proj/Internal/Http-server/Handlers/Api/UserApi/Handlers"
 	"REST-API-pet-proj/Internal/Storage"
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
 	"REST-API-pet-proj/Structure"
@@ -14,12 +15,12 @@ func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req Structure.UserRegistration
 
-		if !ParseAndValidateJSON(w, r, &req) {
+		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
 		}
 
 		var hash string
-		hash, err := PasswordHash(req.Password)
+		hash, err := Handlers.PasswordHash(req.Password)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			_, err = w.Write([]byte(err.Error()))
@@ -36,7 +37,6 @@ func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 			hash)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-
 			_, err = w.Write([]byte(err.Error()))
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -46,7 +46,6 @@ func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-
 		_, err = w.Write([]byte("User Registration Successful"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -59,7 +58,7 @@ func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req Structure.UserRegistration
 
-		if !ParseAndValidateJSON(w, r, &req) {
+		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
 		}
 

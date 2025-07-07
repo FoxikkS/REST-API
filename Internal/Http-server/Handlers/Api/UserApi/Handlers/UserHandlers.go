@@ -1,4 +1,4 @@
-package UserApi
+package Handlers
 
 import (
 	"encoding/json"
