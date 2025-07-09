@@ -4,16 +4,13 @@ import (
 	"REST-API-pet-proj/Internal/HttpServer/Api/User/Handlers"
 	"REST-API-pet-proj/Internal/Storage"
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
+	"REST-API-pet-proj/Models"
 	"net/http"
 )
 
 func UserPost(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req struct {
-			Username string `json:"username" validate:"required"`
-			Title    string `json:"title" validate:"required,min=3,max=100"`
-			Content  string `json:"content" validate:"required,min=10"`
-		}
+		var req Models.Post
 
 		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
