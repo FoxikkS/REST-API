@@ -11,7 +11,9 @@ import (
 	"net/http"
 )
 
-func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
+var IsLogin bool
+
+func Registration(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req Models.UserRegistration
 
@@ -54,7 +56,7 @@ func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	}
 }
 
-func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
+func Login(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req Models.UserRegistration
 
@@ -80,6 +82,7 @@ func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 		}
 
 		_, err = w.Write([]byte("User Login Successful"))
+		IsLogin = true
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -87,7 +90,7 @@ func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	}
 }
 
-func GetUserData(storage *Sqlite.Storage) http.HandlerFunc {
+func Data(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var username = chi.URLParam(r, "username")
 

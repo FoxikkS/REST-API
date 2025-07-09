@@ -2,6 +2,7 @@ package HttpServer
 
 import (
 	"REST-API-pet-proj/Internal/HttpServer/Api/User"
+	"REST-API-pet-proj/Internal/HttpServer/Api/UserActive"
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
 	"github.com/go-chi/chi/v5"
 )
@@ -17,12 +18,12 @@ func InitRouter(storage *Sqlite.Storage) *chi.Mux {
 	//позже добавлю мидлевары
 
 	router.Route("/api", func(r chi.Router) {
-		r.Post("/register", User.UserRegistrationHandler(storage))
-		r.Post("/login", User.UserLoginHandler(storage))
+		r.Post("/register", User.Registration(storage))
+		r.Post("/login", User.Login(storage))
 		//r.Post("/like", )
-		//r.Post("/post", )
+		r.Post("/post", UserActive.UserPost(storage))
 
-		r.Get("/{username}", User.GetUserData(storage))
+		r.Get("/{username}", User.Data(storage))
 	})
 	return router
 }
