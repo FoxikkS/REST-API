@@ -1,4 +1,4 @@
-package Handlers
+package Pkg
 
 import (
 	"log/slog"

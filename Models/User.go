@@ -1,4 +1,4 @@
-package Structure
+package Models
 
 type UserRegistration struct {
 	Username string `json:"username" validate:"min=3,max=32"`

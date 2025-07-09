@@ -1,19 +1,21 @@
-package UserApi
+package User
 
 import (
-	"REST-API-pet-proj/Internal/Http-server/Handlers/Api/UserApi/Handlers"
+	"REST-API-pet-proj/Internal/HttpServer/Api/User/Handlers"
 	"REST-API-pet-proj/Internal/Storage"
 	"REST-API-pet-proj/Internal/Storage/Sqlite"
-	"REST-API-pet-proj/Structure"
+	"REST-API-pet-proj/Models"
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
-func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
+var IsLogin bool
+
+func Registration(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req Structure.UserRegistration
+		var req Models.UserRegistration
 
 		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
@@ -54,9 +56,9 @@ func UserRegistrationHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	}
 }
 
-func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
+func Login(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req Structure.UserRegistration
+		var req Models.UserRegistration
 
 		if !Handlers.ParseAndValidateJSON(w, r, &req) {
 			return
@@ -80,6 +82,7 @@ func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 		}
 
 		_, err = w.Write([]byte("User Login Successful"))
+		IsLogin = true
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -87,7 +90,7 @@ func UserLoginHandler(storage *Sqlite.Storage) http.HandlerFunc {
 	}
 }
 
-func GetUserData(storage *Sqlite.Storage) http.HandlerFunc {
+func Data(storage *Sqlite.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var username = chi.URLParam(r, "username")
 
